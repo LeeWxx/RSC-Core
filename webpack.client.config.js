@@ -16,6 +16,8 @@ for (const relativePath in manifest) {
   entry[name] = absPath
 }
 
+entry['index'] = path.resolve(__dirname, 'client/index.tsx')
+
 export default {
   mode: 'development',
   entry,

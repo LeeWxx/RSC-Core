@@ -2,15 +2,18 @@
   "compilerOptions": {
     "jsx": "react",
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
-    "types": ["node"]
+    "types": ["node"],
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true
   },
-  "include": ["scripts/**/*", "src/**/*"],
+  "include": ["scripts/**/*", "src/**/*", "client/**/*", "react-server-dom-webpack.d.ts"],
   "exclude": ["node_modules"]
 } 
