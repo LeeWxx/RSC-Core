@@ -1,12 +1,24 @@
 {
   "name": "rsc-demo",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "NODE_OPTIONS=\"--loader ts-node/esm\" node --experimental-specifier-resolution=node scripts/generate-client-manifest.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@babel/parser": "^7.27.5",
+    "@babel/traverse": "^7.27.4",
+    "@types/babel__traverse": "^7.20.7",
+    "@types/node": "^22.15.29",
+    "glob": "^11.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
 }
+
