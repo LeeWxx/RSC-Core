@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate": "NODE_OPTIONS=\"--loader ts-node/esm\" node --experimental-specifier-resolution=node scripts/generate-client-manifest.ts",
-    "build:client": "webpack --config webpack.client.config.js"
+    "build:client": "webpack --config webpack.client.config.js",
+    "build:server": "webpack --config webpack.server.config.js"
+    
   },
   "keywords": [],
   "author": "",
@@ -30,6 +32,7 @@
     "@types/express": "^5.0.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-server-dom-webpack": "^19.1.0"
+    "react-server-dom-webpack": "^19.1.0",
+    "webpack-node-externals": "^3.0.0"
   }
 }
