@@ -1,43 +1,63 @@
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+// webpack.client.config.js
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const manifestPath = path.resolve(__dirname, 'dist/client-manifest.json')
-const componentDir = path.resolve(__dirname, 'src/components')
-
-const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
-const entry = {}
-for (const relativePath in manifest) {
-  const name = relativePath.replace(/\.tsx$/, '')
-  const absPath = path.join(componentDir, relativePath)
-  entry[name] = absPath
-}
-
-entry['index'] = path.resolve(__dirname, 'client/index.tsx')
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default {
   mode: 'development',
-  entry,
+  target: 'web',
+
+  entry: {
+    index: path.resolve(__dirname, 'client/index.tsx'),
+  },
+
   output: {
     path: path.resolve(__dirname, 'dist/client'),
     filename: '[name].js',
     publicPath: '/client/',
   },
+
   resolve: {
+    mainFields: ['browser', 'module', 'main'],
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    alias: {
+      'react-server-dom-webpack/client$':
+        path.resolve(
+          __dirname,
+          'node_modules/react-server-dom-webpack/client.browser.js'
+        ),
+    },
   },
+
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: 'ts-loader',
-        options: {
-          transpileOnly: true,
-        },
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              compilerOptions: {
+                // Webpack 빌드시만 noEmit을 해제
+                noEmit: false
+              }
+            }
+          }
+        ]
       },
     ],
   },
-}
+
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, 'dist/client'),
+    },
+    port: 3001,
+    hot: true,
+    historyApiFallback: true,
+  },
+};

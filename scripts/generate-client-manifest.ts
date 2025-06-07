@@ -5,7 +5,13 @@ import { parse } from '@babel/parser'
 import { File, Directive } from '@babel/types'
 import { fileURLToPath } from 'url'
 
-type ClientManifest = Record<string, string>
+type ClientManifest = {
+  [id: string]: {
+    id: string;
+    chunks: string[];
+    name: string;
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -24,39 +30,37 @@ function findUseClient(fileContent: string): boolean {
     return false
   }
 
-  const directives = ast.program.directives as Directive[]
-  for (const dir of directives) {
-    const literal = dir.value
-    if (literal.type === 'DirectiveLiteral' && literal.value === 'use client') {
-      return true
-    }
-  }
-
-  return false
+  return ast.program.directives.some(
+    (directive: Directive) => directive.value.value === 'use client'
+  )
 }
 
-function generateManifest() {
-  const pattern = `${COMPONENTS_DIR}/**/*.tsx`
-  const files = globSync(pattern)
-
+function generateClientManifest() {
+  const clientComponents = globSync('**/*.{tsx,jsx}', {
+    cwd: COMPONENTS_DIR,
+    absolute: true,
+  }).filter((filepath) => {
+    const content = fs.readFileSync(filepath, 'utf-8')
+    return findUseClient(content)
+  })
+  
+  
   const manifest: ClientManifest = {}
-
-  for (const filePath of files) {
-    let content: string
-    try {
-      content = fs.readFileSync(filePath, 'utf-8')
-    } catch {
-      continue
+  
+  clientComponents.forEach((filepath) => {
+    const relativePath = path.relative(COMPONENTS_DIR, filepath)
+    const filename = path.basename(relativePath)
+    const modulePath = `./src/components/${relativePath}`
+    
+    manifest[filename] = {
+      id: modulePath.replace(/\\/g, '/'),
+      chunks: ['index'],
+      name: path.basename(filename, path.extname(filename))
     }
-
-    if (findUseClient(content)) {
-      const relative = path.relative(COMPONENTS_DIR, filePath).replace(/\\/g, '/')
-      manifest[relative] = `client:${relative}`
-    }
-  }
-
-  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true })
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(manifest, null, 2), 'utf-8')
+  })
+  
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(manifest, null, 2))
+  console.log(`클라이언트 매니페스트 생성 : ${OUTPUT_PATH}`)
 }
 
-generateManifest()
+generateClientManifest()
