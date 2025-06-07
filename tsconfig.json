@@ -10,10 +10,15 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "types": ["node"],
-    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "noEmit": true
   },
-  "include": ["scripts/**/*", "src/**/*", "client/**/*", "react-server-dom-webpack.d.ts"],
+  "include": [
+    "scripts/**/*",
+    "src/**/*",
+    "client/**/*",
+    "server/**/*",
+    "react-server-dom-webpack.d.ts"
+  ],
   "exclude": ["node_modules"]
-} 
+}
